@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+   body{
+    background-color: aliceblue;
+   }
+    #app {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+   input, select, button {
+      margin-bottom: 10px;
+      padding: 8px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 10px;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+   p {
+      margin: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="app">
+  <h1>Task Management</h1>
+
+  <form @submit.prevent="addTask">
+    <label for="taskTitle">Task Title:</label>
+    <input type="text" id="taskTitle" v-model="newTask.title" required>
+
+    <label for="taskStatus">Task Status:</label>
+    <select id="taskStatus" v-model="newTask.completed">
+      <option value="false">Incomplete</option>
+      <option value="true">Completed</option>
+    </select>
+
+    <button type="submit">Add Task</button>
+  </form>
+
+  <div>
+    <h2>Incomplete Tasks</h2>
+    <ul>
+      <li v-for="task in incompleteTasks" :key="task.id">
+        {{ task.title }} - Incomplete
+        <button @click="toggleTaskStatus(task)">Mark as Completed</button>
+      </li>
+    </ul>
+
+    <h2>Completed Tasks</h2>
+    <ul>
+      <li v-for="task in completedTasks" :key="task.id">
+        {{ task.title }} - Completed
+        <button @click="toggleTaskStatus(task)">Mark as Incomplete</button>
+      </li>
+    </ul>
+  </div>
+
+  <p>Total Incomplete Tasks: {{ incompleteTasks.length }}</p>
+  <p>Total Completed Tasks: {{ completedTasks.length }}</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<script>
+new Vue({
+  el: '#app',
+  data: {
+    tasks: [
+    
+    ],
+    newTask: { title: '', completed: false },
+  },
+  computed: {
+    incompleteTasks() {
+      return this.tasks.filter(task => !task.completed);
+    },
+    completedTasks() {
+      return this.tasks.filter(task => task.completed);
+    },
+  },
+  methods: {
+    addTask() {
+      this.tasks.push({ id: this.tasks.length + 1, ...this.newTask });
+      this.newTask = { title: '', completed: false };
+    },
+    toggleTaskStatus(task) {
+      task.completed = !task.completed;
+    },
+  },
+  watch: {
+    tasks: {
+      handler() {
+        console.log('tasks modif');
+      },
+      deep: true,
+    },
+  },
+  created() {
+    console.log('Component created');
+  },
+});
+</script>
+
+</body>
+</html>
